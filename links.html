@@ -275,19 +275,17 @@
                 <li class="fav"><a href="https://css-tricks.com/">Css tricks</a> - Niet alleen voor css, maar wel met heel veel css gerelateerde artikelen</li>
                 <li><a href="https://www.sitepoint.com/">Sitepoint</a> - Een beetje als css-tricks</li>
                 <li><a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/">Download virtual machines</a>Test Microsoft Edge and versions of IE8 through IE11 using free virtual machines you download and manage locally.</li>
-                <!-- <li><a href=""></a></li>
-                    <li><a href=""></a></li> -->
             </ul>
         </section>
         <section>
                 <!-- 
                 This file as well as the form target file will be php files
-                data will be stored in a json file 
+                data will be stored in a json file data.json
                 decoding json file, into assosciative array using:   
                     $JSON_str = file_get_contents('data.json');
                     $tempArray = json_decode($JSON_str, true); true to get an assosiative array
                 And push data into array using:
-                    array_push($tempArray[], $data);
+                    array_push($tempArray["subj"], $data);
                     $jsonData = json_encode($tempArray);
                     file_put_contents('results.json', $jsonData);
                 json file ordering: 
@@ -296,8 +294,16 @@
                     "css": [["url", "text"], ["url2", "text2"],...]
                     ...
                 }
-             -->
 
+                fill contents with data from json file
+                function ulFromJson($subj, $tempArray) {
+                    $htmlConcat = "<ul>";
+                    foreach($tempArray["subj"], as $arr) {
+                        $htmlConcat .= "<li><a href=\"{$arr[0]}>{$arr[1]}</a>";
+                    }
+                    return $htmlConcat."</ul>";
+                }
+             -->
             <form action="add-link.php" method="post">
                 <legend>Voeg Link toe</legend>
                 <div class="form-group row">
