@@ -206,7 +206,7 @@ if(isset($_POST["submit"])) {
             visibility: hidden;
         }
         .checkbox {
-            top: 4px;
+            top: 10px;
             width: 40px;
             height: 8px;
             background: #555;
@@ -235,14 +235,22 @@ if(isset($_POST["submit"])) {
             top: -6px;
         }
         
-        .add-link-button {
-
-        }
-
+        
         /* Form styles */
         .form {
-            padding: 2em 3em 2em 2em;
+            padding: 0;
+            height: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s;
         }
+        section.form.showIt {
+            height: auto;
+            padding: 2em 3em 2em 2em;
+            opacity: 1 !important;
+            visibility: visible;
+        }
+
         .form form {
             border: 1px solid grey;
             padding: 2em;
@@ -351,8 +359,6 @@ if(isset($_POST["submit"])) {
                 </div>
             </form>
         </section>
-
-
         <section>
             <h2>HTML</h2>
             <ul>
@@ -474,6 +480,13 @@ if(isset($_POST["submit"])) {
                 fav.forEach((el) => {el.classList.remove("strong");});
             }
         });
+        
+        const form = document.querySelector(".form");
+        const showForm = document.querySelector(".showform");
+        showForm.addEventListener("click", (e) => {
+            form.classList.toggle("showIt")    
+        });
+
     </script>
             
 </body>
