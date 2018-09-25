@@ -10,13 +10,17 @@ $subject = '';
 $url = '';
 $link-text = '';
 $password = '';
+// Doesn't really need a md5 hash but here it is
+$md5PassWord = md5('C0d3g0r1ll4');
 
 function clean_text($string) {
+    // Remove any posibilty for SQL injection
 	$string = trim($string);
 	$string = stripslashes($string);
 	$string = htmlspecialchars($string);
 	return $string;
 }
+
 if(isset($_POST["submit"])) {
 	if(empty($_POST["name"])) 	{
 		$error .= '<p><label class="text-danger">Please Enter your Name</label></p>';
@@ -27,44 +31,49 @@ if(isset($_POST["submit"])) {
 			$error .= '<p><label class="text-danger">Only letters and white space allowed</label></p>';
 		}
 	} 
-	if(empty($_POST["email"])) {
-		$error .= '<p><label class="text-danger">Please Enter your Email</label></p>';
+	if(empty($_POST["url"])) {
+		$error .= '<p><label class="text-danger">Please Enter your url</label></p>';
 	} else {
-		$email = clean_text($_POST["email"]);
-		if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			$error .= '<p><label class="text-danger">Invalid email format</label></p>';
+		$url = clean_text($_POST["url"]);
+		if(!filter_var($url, FILTER_VALIDATE_URL)) {
+			$error .= '<p><label class="text-danger">Invalid url format</label></p>';
 		}
 	}
-	if(empty($_POST["subject"])) {
-		$error .= '<p><label class="text-danger">Subject is required</label></p>';
+	if(empty($_POST["link-text"])) {
+		$error .= '<p><label class="text-danger">The link text is required</label></p>';
 	} else {
-		$subject = clean_text($_POST["subject"]);
+		$link-text = clean_text($_POST["link-text"]);
 	}
-	if(empty($_POST["message"])) {
-		$error .= '<p><label class="text-danger">Message is required</label></p>';
+	if(empty($_POST["password"])) {
+        $error .= '<p><label class="text-danger">password is required</label></p>';
+    } elseif (md5($password) !== $md5PassWord;) {
+        $error .= '<p><label class="text-danger">password is incorrect</label></p>';
 	} else {
-		$message = clean_text($_POST["message"]);
+		md5($password) == $md5PassWord;
 	}
 	if($error == '') {
-		$file_open = fopen("contact_data.csv", "a");
-		$no_rows = count(file("contact_data.csv"));
-		if($no_rows > 1) {
-			$no_rows = ($no_rows - 1) + 1;
-		}
-		$form_data = array(
-			'sr_no'		=>	$no_rows,
-			'name'		=>	$name,
-			'email'		=>	$email,
-			'subject'	=>	$subject,
-			'message'	=>	$message
-		);
-		fputcsv($file_open, $form_data);
-		$error = '<label class="text-success">Thank you for contacting us</label>';
-		$name = '';
-		$email = '';
-		$subject = '';
-		$message = '';
+        $data = [$url, $link-text]
+		$JSON_str = file_get_contents('data.json');
+        $tempArray = json_decode($JSON_str, true);
+        array_push($tempArray["$subject"], $data);
+        $jsonData = json_encode($tempArray);
+        file_put_contents('results.json', $jsonData);
 	}
+}
+
+$JSON_str = file_get_contents('data.json');
+$tempArray = json_decode($JSON_str, true);
+
+function ulFromJson($subj, $tempArray) {
+    // A subject string should be passed to the function together with 
+    // the associative array with all the data from the JSON file 
+    // A unordered list with all the right list items is returned
+    
+    $htmlConcat = "<ul>";
+    foreach($tempArray["subj"], as $arr) {
+        $htmlConcat .= "<li><a href=\"{$arr[0]}>{$arr[1]}</a>";
+    }
+    return $htmlConcat."</ul>";
 }
 
 
@@ -86,17 +95,14 @@ if(isset($_POST["submit"])) {
     <link rel="apple-touch-icon" sizes="144x144" href="./apple-touch-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="./apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-180x180.png">
-    <link rel="icon" type="image/png" href="./android-chrome-96x96.png" sizes="96x96">
     <link rel="icon" type="image/png" href="./android-chrome-144x144.png" sizes="144x144">
     <link rel="icon" type="image/png" href="./android-chrome-192x192.png" sizes="192x192">
-    <link rel="icon" type="image/png" href="./android-chrome-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="./android-chrome-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/png" href="./android-chrome-16x16.png" sizes="16x16">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
     <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="./normalizer.css">
-    <link rel="stylesheet" href="./bootstrap.min.css">
+    <link rel="stylesheet" href="normalizer.css">
+    <link rel="stylesheet" href="bootstrap.min.css">
     <!-- v0.8 -->
     <style type="text/css">
         * {
@@ -284,12 +290,12 @@ if(isset($_POST["submit"])) {
                 <label for="checkboxInput" class="checkbox-one"><b>Andrew's favorieten</b></label> 
                 <div class="checkbox">
                     <input type="checkbox" value="1" id="checkboxInput" name="" />
-                    <label for="checkboxInput"></label>
+                    <label for="checkboxInput" aria-hidden="true"></label>
                 </div>
             </div> 
         </div>
         <div class="top-buttons add-link-button">
-            <button class="showform">Show Form</button>
+            <button class="showform btn btn-primary">Toon Formulier</button>
         </div>
 
         <section class="form">
@@ -340,8 +346,8 @@ if(isset($_POST["submit"])) {
                         class="col-sm-8 form-control" 
                         type="url" id="url" name="url" 
                         placeholder="https://www.voorbeeld.nl/"
-                        pattern="^(?:https?)?:\/\/(?:www)?\.?.+\.\w{2,3}\.?(?:\w{2,3})?$" 
-                        title="url" required>
+                        pattern="^(?:https?:\/\/)?(?:www)?\.?.+\.\w{2,3}\.?(?:\w{2,3})?([\/\\\-A-Za-z]+)?$" 
+                        title="url in de vorm http://iets.nl" required>
                 </div>
                 <div class="form-group row">
                     <label for="url" class="col-sm-4 col-form-label">Link beschrijving</label>
@@ -484,9 +490,14 @@ if(isset($_POST["submit"])) {
         const form = document.querySelector(".form");
         const showForm = document.querySelector(".showform");
         showForm.addEventListener("click", (e) => {
-            form.classList.toggle("showIt")    
+            form.classList.toggle("showIt");
+            if (showForm.innerHTML.startsWith("T")){
+                showForm.innerHTML = "Verberg Formulier";
+            } else {
+                showForm.innerHTML = "Toon Formulier";
+            }
         });
-
+        // import md5 from 'md5';  
     </script>
             
 </body>
