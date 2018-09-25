@@ -1,19 +1,72 @@
 <!-- <?php
 //index.php
 
+// Loading:
+$data[] = $_POST['data'];
+
+// submitting:
 $error = '';
 $subject = '';
 $url = '';
 $link-text = '';
 $password = '';
 
-function clean_text($string)
-{
+function clean_text($string) {
 	$string = trim($string);
 	$string = stripslashes($string);
 	$string = htmlspecialchars($string);
 	return $string;
 }
+if(isset($_POST["submit"])) {
+	if(empty($_POST["name"])) 	{
+		$error .= '<p><label class="text-danger">Please Enter your Name</label></p>';
+	}
+	else {
+		$name = clean_text($_POST["name"]);
+		if(!preg_match("/^[a-zA-Z ]*$/",$name)) {
+			$error .= '<p><label class="text-danger">Only letters and white space allowed</label></p>';
+		}
+	} 
+	if(empty($_POST["email"])) {
+		$error .= '<p><label class="text-danger">Please Enter your Email</label></p>';
+	} else {
+		$email = clean_text($_POST["email"]);
+		if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			$error .= '<p><label class="text-danger">Invalid email format</label></p>';
+		}
+	}
+	if(empty($_POST["subject"])) {
+		$error .= '<p><label class="text-danger">Subject is required</label></p>';
+	} else {
+		$subject = clean_text($_POST["subject"]);
+	}
+	if(empty($_POST["message"])) {
+		$error .= '<p><label class="text-danger">Message is required</label></p>';
+	} else {
+		$message = clean_text($_POST["message"]);
+	}
+	if($error == '') {
+		$file_open = fopen("contact_data.csv", "a");
+		$no_rows = count(file("contact_data.csv"));
+		if($no_rows > 1) {
+			$no_rows = ($no_rows - 1) + 1;
+		}
+		$form_data = array(
+			'sr_no'		=>	$no_rows,
+			'name'		=>	$name,
+			'email'		=>	$email,
+			'subject'	=>	$subject,
+			'message'	=>	$message
+		);
+		fputcsv($file_open, $form_data);
+		$error = '<label class="text-success">Thank you for contacting us</label>';
+		$name = '';
+		$email = '';
+		$subject = '';
+		$message = '';
+	}
+}
+
 
 ?> -->
 
@@ -79,7 +132,7 @@ function clean_text($string)
         }
         main{
             display: grid;
-            grid-template-columns: 1fr minmax(400px, 900px) 1fr;
+            grid-template-columns: 1fr minmax(200px, 450px) minmax(200px, 450px) 1fr;
         }
         section {
             width: 100vw;
@@ -89,9 +142,9 @@ function clean_text($string)
             align-items: center;
             align-content: center; */
             max-width: 900px;
-            grid-column: 2 / 3; 
+            grid-column: 2 / 4; 
         }
-
+        
         /* Van codegorilla */
         div .logo {
             float: left;
@@ -134,11 +187,26 @@ function clean_text($string)
             background-color:rgba(176, 196, 222, 0.27);
         }
         
+        .top-buttons {
+            display: flex;
+            padding: 3em 3em 1em;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+        }
+        .top-buttons:first-of-type {
+            grid-column: 2/3;
+        }
+        .top-buttons:last-of-type {
+            grid-column: 3/4;
+        }
+
         /* Checkbox */
         input[type=checkbox] {
             visibility: hidden;
         }
         .checkbox {
+            top: 4px;
             width: 40px;
             height: 8px;
             background: #555;
@@ -166,6 +234,28 @@ function clean_text($string)
             position: relative;
             top: -6px;
         }
+        
+        .add-link-button {
+
+        }
+
+        /* Form styles */
+        .form {
+            padding: 2em 3em 2em 2em;
+        }
+        .form form {
+            border: 1px solid grey;
+            padding: 2em;
+        }
+        .form label {
+            padding-left: 0;
+        }
+        @media (max-width: 576px) {
+            .form {
+                padding: 2em 2em 2em 1em;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -181,15 +271,88 @@ function clean_text($string)
         </div>
     </header>
     <main>
-        <section>
-            <div class="checkbox-container"> 
+        <div class="top-buttons checkbox-container">
+            <div class="inner-container"> <!-- This seems super hacky... -->
                 <label for="checkboxInput" class="checkbox-one"><b>Andrew's favorieten</b></label> 
                 <div class="checkbox">
                     <input type="checkbox" value="1" id="checkboxInput" name="" />
                     <label for="checkboxInput"></label>
                 </div>
-            </div>
+            </div> 
+        </div>
+        <div class="top-buttons add-link-button">
+            <button class="showform">Show Form</button>
+        </div>
+
+        <section class="form">
+                <!-- 
+                This file as well as the form target file will be php files
+                data will be stored in a json file data.json
+                decoding json file, into assosciative array using:   
+                    $JSON_str = file_get_contents('data.json');
+                    $tempArray = json_decode($JSON_str, true); true to get an assosiative array
+                And push data into array using:
+                    array_push($tempArray["subj"], $data);
+                    $jsonData = json_encode($tempArray);
+                    file_put_contents('results.json', $jsonData);
+                json file ordering: 
+                {
+                    "html": [["url", "text"], ["url2", "text2"],...]
+                    "css": [["url", "text"], ["url2", "text2"],...]
+                    ...
+                }
+
+                fill contents with data from json file
+                function ulFromJson($subj, $tempArray) {
+                    $htmlConcat = "<ul>";
+                    foreach($tempArray["subj"], as $arr) {
+                        $htmlConcat .= "<li><a href=\"{$arr[0]}>{$arr[1]}</a>";
+                    }
+                    return $htmlConcat."</ul>";
+                }
+             -->
+            <form action="add-link.php" method="post">
+                <legend>Voeg Link toe</legend>
+                <div class="form-group row">
+                    <label for="subject" class="col-sm-4 col-form-label">Onderwerp</label>
+                    <select name="subject" id="subject" class="col-sm-8 form-control" title="Kies link onderwerp">
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="js">JS</option>
+                        <option value="php">PHP</option>
+                        <option value="youtube">Youtube filmpjes</option>
+                        <option value="editors">Editors/Tools</option>
+                        <option value="learning">Learning Resources</option>
+                        <option value="misc">Misc</option>
+                    </select>
+                </div>
+                <div class="form-group row">
+                    <label for="url" class="col-sm-4 col-form-label">Link</label>
+                    <input 
+                        class="col-sm-8 form-control" 
+                        type="url" id="url" name="url" 
+                        placeholder="https://www.voorbeeld.nl/"
+                        pattern="^(?:https?)?:\/\/(?:www)?\.?.+\.\w{2,3}\.?(?:\w{2,3})?$" 
+                        title="url" required>
+                </div>
+                <div class="form-group row">
+                    <label for="url" class="col-sm-4 col-form-label">Link beschrijving</label>
+                    <input 
+                        class="col-sm-8 form-control" 
+                        type="text" id="link-text" name="link-text" 
+                        placeholder="Link beschrijving"
+                        title="Link tekst" 
+                        required>
+                </div>                
+                <div class="form-group row">
+                    <label for="password" class="col-sm-4 col-form-label">Password</label>
+                    <input type="password" class="col-sm-5 form-control" id="password" placeholder="wachtwoord" required>
+                    <button type="submit" class="btn btn-primary col-sm-2 offset-sm-1">Send</button>
+                </div>
+            </form>
         </section>
+
+
         <section>
             <h2>HTML</h2>
             <ul>
@@ -295,73 +458,6 @@ function clean_text($string)
                 <li><a href="https://www.sitepoint.com/">Sitepoint</a> - Een beetje als css-tricks</li>
                 <li><a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/">Download virtual machines</a>Test Microsoft Edge and versions of IE8 through IE11 using free virtual machines you download and manage locally.</li>
             </ul>
-        </section>
-        <section>
-                <!-- 
-                This file as well as the form target file will be php files
-                data will be stored in a json file data.json
-                decoding json file, into assosciative array using:   
-                    $JSON_str = file_get_contents('data.json');
-                    $tempArray = json_decode($JSON_str, true); true to get an assosiative array
-                And push data into array using:
-                    array_push($tempArray["subj"], $data);
-                    $jsonData = json_encode($tempArray);
-                    file_put_contents('results.json', $jsonData);
-                json file ordering: 
-                {
-                    "html": [["url", "text"], ["url2", "text2"],...]
-                    "css": [["url", "text"], ["url2", "text2"],...]
-                    ...
-                }
-
-                fill contents with data from json file
-                function ulFromJson($subj, $tempArray) {
-                    $htmlConcat = "<ul>";
-                    foreach($tempArray["subj"], as $arr) {
-                        $htmlConcat .= "<li><a href=\"{$arr[0]}>{$arr[1]}</a>";
-                    }
-                    return $htmlConcat."</ul>";
-                }
-             -->
-            <form action="add-link.php" method="post">
-                <legend>Voeg Link toe</legend>
-                <div class="form-group row">
-                    <label for="subject" class="col-sm-2 col-form-label">Onderwerp</label>
-                    <select name="subject" id="subject" class="col-sm-10 form-control" title="Kies link onderwerp" required>
-                        <option value="html">HTML</option>
-                        <option value="css">CSS</option>
-                        <option value="js">JS</option>
-                        <option value="php">PHP</option>
-                        <option value="youtube">Youtube filmpjes</option>
-                        <option value="editors">Editors/Tools</option>
-                        <option value="learning">Learning Resources</option>
-                        <option value="misc">Misc</option>
-                    </select>
-                </div>
-                <div class="form-group row">
-                    <label for="url" class="col-sm-2 col-form-label">Link</label>
-                    <input 
-                        class="col-sm-10 form-control" 
-                        type="url" id="url" name="url" 
-                        placeholder="https://www.voorbeeld.nl/"
-                        pattern="^(?:https?)?:\/\/(?:www)?\.?.+\.\w{2,3}\.?(?:\w{2,3})?$" 
-                        title="Link" required>
-                </div>
-                <div class="form-group row">
-                        <label for="url" class="col-sm-2 col-form-label">Link beschrijving</label>
-                        <input 
-                            class="col-sm-10 form-control" 
-                            type="text" id="link-text" name="link-text" 
-                            placeholder="Link beschrijving"
-                            title="Link tekst" 
-                            required>
-                </div>                
-                <div class="form-group row">
-                    <label for="password" class="col-sm-2 col-form-label">Password</label>
-                    <input type="password" class="col-sm-7 form-control" id="password" placeholder="wachtwoord" required>
-                    <button type="submit" class="btn btn-primary col-sm-2 offset-sm-1">Send</button>
-                </div>
-            </form>
         </section>
     </main>
 
