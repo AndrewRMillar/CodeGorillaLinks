@@ -1,83 +1,117 @@
-<!-- <?php
-//index.php
+<?php
+    //index.php
 
-// Loading:
-$data[] = $_POST['data'];
+    // Loading:
+    $data[] = $_POST['data'];
 
-// submitting:
-$error = '';
-$subject = '';
-$url = '';
-$link-text = '';
-$password = '';
-// Doesn't really need a md5 hash but here it is
-$md5PassWord = md5('C0d3g0r1ll4');
+    // submitting:
+    $error = '';
+    $subject = '';
+    $url = '';
+    $link-text = '';
+    $password = '';
+    // Doesn't really need a md5 hash but here it is
+    $md5PassWord = md5('C0d3g0r1ll4');
 
-function clean_text($string) {
-    // Remove any posibilty for SQL injection
-	$string = trim($string);
-	$string = stripslashes($string);
-	$string = htmlspecialchars($string);
-	return $string;
-}
-
-if(isset($_POST["submit"])) {
-	if(empty($_POST["name"])) 	{
-		$error .= '<p><label class="text-danger">Please Enter your Name</label></p>';
-	}
-	else {
-		$name = clean_text($_POST["name"]);
-		if(!preg_match("/^[a-zA-Z ]*$/",$name)) {
-			$error .= '<p><label class="text-danger">Only letters and white space allowed</label></p>';
-		}
-	} 
-	if(empty($_POST["url"])) {
-		$error .= '<p><label class="text-danger">Please Enter your url</label></p>';
-	} else {
-		$url = clean_text($_POST["url"]);
-		if(!filter_var($url, FILTER_VALIDATE_URL)) {
-			$error .= '<p><label class="text-danger">Invalid url format</label></p>';
-		}
-	}
-	if(empty($_POST["link-text"])) {
-		$error .= '<p><label class="text-danger">The link text is required</label></p>';
-	} else {
-		$link-text = clean_text($_POST["link-text"]);
-	}
-	if(empty($_POST["password"])) {
-        $error .= '<p><label class="text-danger">password is required</label></p>';
-    } elseif (md5($password) !== $md5PassWord;) {
-        $error .= '<p><label class="text-danger">password is incorrect</label></p>';
-	} else {
-		md5($password) == $md5PassWord;
-	}
-	if($error == '') {
-        $data = [$url, $link-text]
-		$JSON_str = file_get_contents('data.json');
-        $tempArray = json_decode($JSON_str, true);
-        array_push($tempArray["$subject"], $data);
-        $jsonData = json_encode($tempArray);
-        file_put_contents('results.json', $jsonData);
-	}
-}
-
-$JSON_str = file_get_contents('data.json');
-$tempArray = json_decode($JSON_str, true);
-
-function ulFromJson($subj, $tempArray) {
-    // A subject string should be passed to the function together with 
-    // the associative array with all the data from the JSON file 
-    // A unordered list with all the right list items is returned
-    
-    $htmlConcat = "<ul>";
-    foreach($tempArray["subj"], as $arr) {
-        $htmlConcat .= "<li><a href=\"{$arr[0]}>{$arr[1]}</a>";
+    function clean_text($string) {
+        // Remove any posibilty for SQL injection
+        $string = trim($string);
+        $string = stripslashes($string);
+        $string = htmlspecialchars($string);
+        return $string;
     }
-    return $htmlConcat."</ul>";
+
+    if(isset($_POST["submit"])) {
+        if(empty($_POST["name"])) 	{
+            $error .= '<p><label class="text-danger">Please Enter your Name</label></p>';
+        }
+        else {
+            $name = clean_text($_POST["name"]);
+            if(!preg_match("/^[a-zA-Z ]*$/",$name)) {
+                $error .= '<p><label class="text-danger">Only letters and white space allowed</label></p>';
+            }
+        } 
+        if(empty($_POST["url"])) {
+            $error .= '<p><label class="text-danger">Please Enter your url</label></p>';
+        } else {
+            $url = clean_text($_POST["url"]);
+            if(!filter_var($url, FILTER_VALIDATE_URL)) {
+                $error .= '<p><label class="text-danger">Invalid url format</label></p>';
+            }
+        }
+        if(empty($_POST["link-text"])) {
+            $error .= '<p><label class="text-danger">The link text is required</label></p>';
+        } else {
+            $link-text = clean_text($_POST["link-text"]);
+        }
+        if(empty($_POST["password"])) {
+            $error .= '<p><label class="text-danger">password is required</label></p>';
+        } elseif (md5($password) !== $md5PassWord) {
+            $error .= '<p><label class="text-danger">password is incorrect</label></p>';
+        } else {
+            md5($password) == $md5PassWord;
+        }
+        if($error == '') {
+            $data = [$url, $link-text];
+            $JSON_str = file_get_contents('data.json');
+            $tempArray = json_decode($JSON_str, true);
+            array_push($tempArray["$subject"], $data);
+            $jsonData = json_encode($tempArray);
+            file_put_contents('results.json', $jsonData);
+        }
+    }
+
+    $JSON_str = file_get_contents('data.json');
+    $tempArray = json_decode($JSON_str, true);
+
+    function ulFromJson($subj, $tempArray) {
+        // A subject string should be passed to the function together with 
+        // the associative array with all the data from the JSON file 
+        // An unordered list with all the right list items is returned
+        
+        $htmlConcat = "<ul>";
+        foreach($tempArray["subj"], as $arr) {
+            $htmlConcat .= "<li><a href=\"{$arr[0]}>{$arr[1]}</a>";
+        }
+        return $htmlConcat."</ul>";
+    }
+
+
+?> 
+
+<?php 
+$dbhost = 'localhost';
+$dbuser = 'zoaqcnkg_gorilla';
+$dbpass = 'CodeGorilla';
+$db = 'zoaqcnkg_linkdump';
+$dbtable = 'links';
+
+$conn = mysqli_connect($dbhost, $dbuser, $dbpass, $db);
+
+if(! $conn ) {
+   die('Could not connect: ' . mysql_error());
 }
 
+$sql = 'SELECT emp_id, emp_name, emp_salary FROM employee';
+mysql_select_db('test_db');
+$retval = mysql_query( $sql, $conn );
 
-?> -->
+if(! $retval ) {
+   die('Could not get data: ' . mysql_error());
+}
+
+while($row = mysql_fetch_array($retval, MYSQL_ASSOC)) {
+   echo "EMP ID :{$row['emp_id']}  <br> ".
+      "EMP NAME : {$row['emp_name']} <br> ".
+      "EMP SALARY : {$row['emp_salary']} <br> ".
+      "--------------------------------<br>"
+      ;
+}
+
+echo "Fetched data successfully\n";
+
+mysql_close($conn);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -299,45 +333,19 @@ function ulFromJson($subj, $tempArray) {
         </div>
 
         <section class="form">
-                <!-- 
-                This file as well as the form target file will be php files
-                data will be stored in a json file data.json
-                decoding json file, into assosciative array using:   
-                    $JSON_str = file_get_contents('data.json');
-                    $tempArray = json_decode($JSON_str, true); true to get an assosiative array
-                And push data into array using:
-                    array_push($tempArray["subj"], $data);
-                    $jsonData = json_encode($tempArray);
-                    file_put_contents('results.json', $jsonData);
-                json file ordering: 
-                {
-                    "html": [["url", "text"], ["url2", "text2"],...]
-                    "css": [["url", "text"], ["url2", "text2"],...]
-                    ...
-                }
-
-                fill contents with data from json file
-                function ulFromJson($subj, $tempArray) {
-                    $htmlConcat = "<ul>";
-                    foreach($tempArray["subj"], as $arr) {
-                        $htmlConcat .= "<li><a href=\"{$arr[0]}>{$arr[1]}</a>";
-                    }
-                    return $htmlConcat."</ul>";
-                }
-             -->
-            <form action="add-link.php" method="post">
+            <form action="links.php" method="post">
                 <legend>Voeg Link toe</legend>
                 <div class="form-group row">
                     <label for="subject" class="col-sm-4 col-form-label">Onderwerp</label>
                     <select name="subject" id="subject" class="col-sm-8 form-control" title="Kies link onderwerp">
-                        <option value="html">HTML</option>
-                        <option value="css">CSS</option>
-                        <option value="js">JS</option>
-                        <option value="php">PHP</option>
-                        <option value="youtube">Youtube filmpjes</option>
-                        <option value="editors">Editors/Tools</option>
-                        <option value="learning">Learning Resources</option>
-                        <option value="misc">Misc</option>
+                        <option value="html" name="html">HTML</option>
+                        <option value="css" name="css">CSS</option>
+                        <option value="js" name="js">JS</option>
+                        <option value="php" name="php">PHP</option>
+                        <option value="youtube" name="youtube">Youtube filmpjes</option>
+                        <option value="editors" name="editor">Editors/Tools</option>
+                        <option value="learning" name="learning">Learning Resources</option>
+                        <option value="misc" name="misc">Misc</option>
                     </select>
                 </div>
                 <div class="form-group row">
@@ -346,7 +354,7 @@ function ulFromJson($subj, $tempArray) {
                         class="col-sm-8 form-control" 
                         type="url" id="url" name="url" 
                         placeholder="https://www.voorbeeld.nl/"
-                        pattern="^(?:https?:\/\/)?(?:www)?\.?.+\.\w{2,3}\.?(?:\w{2,3})?([\/\\\-A-Za-z]+)?$" 
+                        pattern="^(?:https?:\/\/)?(?:www)?\.?.+\.\w{2,3}\.?(?:\w{2-4})?(?:[\/\\\-#?A-Za-z]+)?$" 
                         title="url in de vorm http://iets.nl" required>
                 </div>
                 <div class="form-group row">
@@ -365,9 +373,21 @@ function ulFromJson($subj, $tempArray) {
                 </div>
             </form>
         </section>
+
         <section>
             <h2>HTML</h2>
             <ul>
+                <?php 
+                    // fetch from the database
+                    // use a sql query like:
+                    // 
+                    SELECT * FROM links WHERE subj = `html`;
+                    echo "<li><a href=\"{$url}\">{$link_text}</a>{$desc}</li>"
+
+                ?>
+                <?php foreach($html_data as $key => $val): ?>
+                <?php  ?>
+                <?php endforeach; ?>
                 <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto">Use HTML to solve common problems - <abbr title="Mozilla Developer Network">MDN</abbr></a></li>
                 <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">HTML elements reference - <abbr title="Mozilla Developer Network">MDN</abbr></a></li>
                 <li><a href="http://haml.info/">Haml</a> - Haml is a markup language that’s used to cleanly and simply describe the HTML of any web document</li>
@@ -379,6 +399,7 @@ function ulFromJson($subj, $tempArray) {
                 <!-- <li><a href=""></a></li> -->
             </ul>
         </section>
+
         <section>
             <h2>CSS</h2>
             <ul>
@@ -395,6 +416,7 @@ function ulFromJson($subj, $tempArray) {
                 <!-- <li><a href=""></a></li> -->
             </ul>
         </section>
+
         <section>
             <h2>JavaScript</h2>
             <ul>
@@ -409,6 +431,7 @@ function ulFromJson($subj, $tempArray) {
                     <li><a href=""></a></li> -->
             </ul>
         </section>
+
         <section>
             <h2>PHP</h2>
             <ul>
@@ -420,6 +443,7 @@ function ulFromJson($subj, $tempArray) {
                 <!-- <li><a href=""></a></li> -->
             </ul>
         </section>
+
         <section>
             <h2>Youtube filmpjes</h2>
             <ul>
@@ -431,6 +455,7 @@ function ulFromJson($subj, $tempArray) {
                 <!-- <li><a href=""></a></li> -->
             </ul>
         </section>
+
         <section>
             <h2>Editors/Tools</h2>
             <ul>
@@ -443,6 +468,7 @@ function ulFromJson($subj, $tempArray) {
                 <li><a href="https://www.figma.com/">Figma</a> - Design, prototype, and gather feedback all in one place with Figma. (Ontwerptool)</li>
             </ul>
         </section>
+
         <section>
             <h2>Learning resources</h2>
             <ul>
@@ -454,6 +480,7 @@ function ulFromJson($subj, $tempArray) {
                 <li><a href="https://matthewjamestaylor.com/">Art and Design by Matthew James Taylor</a></li>
             </ul>
         </section>
+
         <section>
             <h2>Miscellaneous links</h2>
             <ul>
@@ -473,7 +500,6 @@ function ulFromJson($subj, $tempArray) {
             </ul>
         </section>
     </main>
-
 
     <script>
         const checkBox = document.querySelector('#checkboxInput');
