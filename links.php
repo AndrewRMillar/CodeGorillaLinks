@@ -8,7 +8,7 @@
     $error = '';
     $subject = '';
     $url = '';
-    $link-text = '';
+    $linktext = '';
     $password = '';
     // Doesn't really need a md5 hash but here it is
     $md5PassWord = md5('C0d3g0r1ll4');
@@ -70,7 +70,7 @@
         // An unordered list with all the right list items is returned
         
         $htmlConcat = "<ul>";
-        foreach($tempArray["subj"], as $arr) {
+        foreach($tempArray["subj"] as $arr) {
             $htmlConcat .= "<li><a href=\"{$arr[0]}>{$arr[1]}</a>";
         }
         return $htmlConcat."</ul>";

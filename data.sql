@@ -25,7 +25,7 @@ INSERT INTO links(`url`, `text`, `desc`, `subj`) VALUES ("https://javascript30.c
 INSERT INTO links(`url`, `text`, `desc`, `subj`) VALUES ("https://dev.to/sarah_chima/var-let-and-const--whats-the-difference-69e", "Var, let and const- what's the difference?", "", "js");
 INSERT INTO links(`url`, `text`, `desc`, `subj`) VALUES ("http://eloquentjavascript.net/", "eloquent javascript", "", "js");
 INSERT INTO links(`url`, `text`, `desc`, `subj`) VALUES ("https://scotch.io/bar-talk/4-javascript-design-patterns-you-should-know", "4 JavaScript Design Patterns You Should Know", "", "js");
-INSERT INTO links(`url`, `text`, `desc`, `subj`) VALUES ("https://www.sitepoint.com/unit-test-javascript-mocha-chai/", "Sitepoint", " - Unit Test Your JavaScript Using Mocha and Chai", "", "js");
+INSERT INTO links(`url`, `text`, `desc`, `subj`) VALUES ("https://www.sitepoint.com/unit-test-javascript-mocha-chai/", "Sitepoint", " - Unit Test Your JavaScript Using Mocha and Chai", "js");
 INSERT INTO links(`url`, `text`, `desc`, `subj`) VALUES ("https://code.sololearn.com/W0jt01Ob69QG/?ref=app", "10 Javascript Mini-Projects", "", "js");
 INSERT INTO links(`url`, `text`, `desc`, `subj`) VALUES ("https://wesbos.com/courses/", "Wesbos cources", " - Cursusen door Wes Bos", "js");
 
